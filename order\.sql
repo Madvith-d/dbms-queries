@@ -142,5 +142,5 @@ select c.cname from customer c where c.cid in (
     orders o , orderItem oi 
     where o.orderId = oi.orderId
     group by o.cid 
-    having count(distinct oi.itemid) = (select count(*) from item)
+     having count(distinct oi.itemid) = (select count(*) from item)
 )
