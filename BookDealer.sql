@@ -109,6 +109,17 @@ where pubid in (
 select * from CATALOGUE
 
 --3. Find the number of orders for the book that has minimum sales.
-select bookid from ORDER_DET group by bookid having sum(qty) <= all (
-	select sum(qty) from ORDER_DET group by bookid
+
+select bookid, count(ordno) as number_of_orders
+from ORDER_DET
+where bookid in (
+    select bookid
+    from ORDER_DET
+    group by bookid
+    having sum(qty) <= all (
+        select sum(qty)
+        from ORDER_DET
+        group by bookid
+    )
 )
+group by bookid;
