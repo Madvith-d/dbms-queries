@@ -115,7 +115,15 @@ where not exists (select bookISBN
 					where dept = C.dept) 
 					and bookISBN not in                                                                     
 							(select bookISBN
-							 from TEXTBOOK where publisher='McGraw'))
+							 from TEXTBOOK where publisher='McGraw'));
+--alternative
+
+select C.dept
+from COURSE C
+, BOOK_ADAPTION B ,
+TEXTBOOK T where C.course_id = B.course_id and  B.bookISBN = T.bookISBN
+group by C.dept
+having count(*) = count(case when T.publisher = 'McGraw' then 1 end);
 
 
 --3. List the bookISBNs and book titles of the department that has maximum number of
@@ -130,7 +138,9 @@ from COURSE C,ENROLL E
 where C.course_id=E.course_id
 group by C.dept
 having COUNT(distinct E.regno)>=ALL (           
-                                      select COUNT( distinct E.regno) as coun_reg                 
+                                      select COUNT( distinct E.regno)              
                                       from ENROLL E,COURSE C
                                       where E.course_id=C.course_id
                                       group by C.dept));
+
+
