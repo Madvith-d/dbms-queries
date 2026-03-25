@@ -1,146 +1,136 @@
-CREATE database orderdb
-use orderdb
+create database ordship
+use ordship
 
-create table customer(
-    cid int not null,
-    cname varchar(20),
-    city varchar(20),
-    primary key(cid)
-)
-insert into customer VALUES
-(111,'Madvith','Karkala'),
-(112,'John','Manipal'),
-(113,'Alice','Mangalore');
-create table orders(
-    orderid int not null ,
-    odate DATE not null,
-    cid int not null,
-    oamt int ,
-    primary key(orderid),
-    foreign key( cid) references customer(cid) on delete cascade on update cascade
-)
-INSERT INTO orders VALUES
-(100, '2025-01-10', 111, 5000),
-(101, '2025-01-12', 112, 3000),
-(102, '2025-01-15', 113, 7000),
-(103, '2025-01-18', 111, 4500),
-(104, '2025-01-20', 112, 6000);
-INSERT INTO orders VALUES
-(105, '2025-01-22', 113, 8000),
-(106, '2025-01-25', 111, 2000),
-(107, '2025-01-28', 112, 9000),
-(108, '2025-02-01', 113, 3500),
-(109, '2025-02-03', 111, 6700);
-create table item(
-    itemid int not null,
-    price int ,
-    primary key(itemid)
-)
+CREATE TABLE CUSTOMER (
+			custid int,
+			cname char(15) not null,
+			city varchar(30),
+			primary key (custid)  
+			)
 
-insert into item values
-(1,2000),
-(2,5000),
-(3,6546),
-(4,1232),
-(5,4234);
-create table orderItem(
-    orderid int not null,
-    itemid int not null,
-    qty int ,
-    
-    foreign key(orderid) references orders(orderid) on delete cascade on update cascade,
-    foreign key(itemid) references item(itemid) on delete cascade on update cascade,
-)
-insert into orderItem values
-(100,1,2),
-(101,2,1),
-(102,3,4),
-(103,4,2),
-(104,5,3);
-INSERT INTO orderItem VALUES
--- Existing pattern extended
-(105, 1, 3),
-(105, 2, 2),
-(106, 3, 4),
-(107, 4, 1),
-(108, 5, 6),
+CREATE TABLE C_ORDER (
+			orderid int,
+			odate datetime,
+			custid int,
+			ordamt int,
+			primary key (orderid)  ,
+			foreign key(custid) references CUSTOMER(custid)on delete cascade on update cascade
+			)
+CREATE TABLE ITEM (
+			itemid  int,
+			price int,
+			primary key (itemid)
+		  )
+CREATE TABLE ORDER_ITEM (
+			orderid int,
+			itemid int,
+			qty int,
+			primary key (orderid,itemid),
+			foreign key(orderid) references C_ORDER(orderid) on delete cascade on update cascade,
+			foreign key(itemid) references ITEM(itemid) on delete cascade on update cascade
+			);
 
--- Ensure item repetition across many orders
-(106, 1, 2),
-(107, 1, 1),
-(108, 2, 3),
-(109, 3, 2),
-(109, 4, 5),
+			CREATE TABLE WAREHOUSE (
+			warehouseid int,
+			city varchar(20)not null,
+			primary key (warehouseid)
+		   )
 
--- VERY IMPORTANT: customer 111 orders ALL items
-(100, 1, 2),
-(103, 2, 1),
-(106, 3, 4),
-(109, 4, 2),
-(100, 5, 1);
-create table warehouse(
-    warehouseid int not null,
-    city varchar(20),
-    primary key(warehouseid),
-)
-INSERT INTO warehouse VALUES
-(1, 'Bangalore'),
-(2, 'Mangalore');
-INSERT INTO warehouse VALUES
-(3, 'Udupi'),
-(4, 'Mumbai');
-create table shipment(
-    orderid int not null,
-    warehouseid int not null,
-    shipdate date ,
-    foreign key(orderid) references orders(orderid) on delete cascade on update cascade,
-    foreign key(warehouseid) references warehouse(warehouseid) on delete cascade on update cascade,
-)
-INSERT INTO shipment VALUES
-(100, 1, '2025-01-11'),
-(101, 2, '2025-01-13'),
-(102, 1, '2025-01-16');
-INSERT INTO shipment VALUES
-(103, 2, '2025-01-19'),
-(104, 1, '2025-01-21'),
-(105, 3, '2025-01-23'),
-(106, 2, '2025-01-26'),
-(107, 4, '2025-01-29'),
-(108, 1, '2025-02-02'),
-(109, 3, '2025-02-04');
---Produce a listing: CUSTNAME, #oforders, AVG_ORDER_AMT, where the middle
+CREATE TABLE SHIPMENT (
+			orderid int,
+			warehouseid int,
+			ship_dt datetime,
+			primary key (orderid,warehouseid)  ,
+			foreign key(orderid) references C_ORDER(orderid) on delete cascade on update cascade,
+			foreign key(warehouseid) references WAREHOUSE(warehouseid) on delete cascade on update cascade
+		   )
+insert into CUSTOMER values (111,'John Smith', 'Karkala')
+insert into CUSTOMER values (112,'Ramesh N', 'Nitte')			
+insert into CUSTOMER values (113,'Franklin', 'Karkala')
+insert into CUSTOMER values (114,'Alica', 'mangalore')
+insert into CUSTOMER values (115,'Raju', 'Udupi')
+
+insert into C_ORDER values (201,'2001-08-03', 111,null)
+insert into C_ORDER values (202,'2002-08-03', 111,null)
+insert into C_ORDER values (203,'2001-08-04', 112,null)
+insert into C_ORDER values (204,'2004-02-01', 113,null)
+insert into C_ORDER values (205,'2001-04-02', 114,null)
+insert into C_ORDER values (206,'2005-02-01', 115,null)
+insert into C_ORDER values (207,'2008-04-01', 115,null)
+insert into C_ORDER values (209,'2008-02-01', 114,null)
+insert into C_ORDER values (208,'2008-12-01', 111,null)
+
+insert into ITEM values (301,2000)
+insert into ITEM values (302,2000)
+insert into ITEM values (303,1000)
+insert into ITEM values (304,5000)
+insert into ITEM values (305,4000)
+
+insert into ORDER_ITEM values (201,301,2)
+insert into ORDER_ITEM values (201,302,4)
+insert into ORDER_ITEM values (201,303,4)
+insert into ORDER_ITEM values (201,304,4)
+insert into ORDER_ITEM values (201,305,3)
+
+insert into ORDER_ITEM values (202,303,2)
+insert into ORDER_ITEM values (202,305,4)
+insert into ORDER_ITEM values (203,302,1)
+insert into ORDER_ITEM values (204,305,2)
+insert into ORDER_ITEM values (205,301,3)
+insert into ORDER_ITEM values (206,301,5)
+
+insert into WAREHOUSE values (1,'MAGALORE')
+insert into WAREHOUSE values (2,'MAGALORE')
+insert into WAREHOUSE values (3,'MAGALORE')
+insert into WAREHOUSE values (4,'UDUPI')
+insert into WAREHOUSE values (5,'UDUPI')
+insert into WAREHOUSE values (6,'KARKALA')
+
+
+insert into SHIPMENT values (201,1,'2001-04-02')
+insert into SHIPMENT values (201,2,'2001-04-04')
+insert into SHIPMENT values (202,1,'2001-05-02')
+
+insert into SHIPMENT values (202,2,'2002-05-12')
+insert into SHIPMENT values (202,3,'2003-06-01')
+insert into SHIPMENT values (202,4,'2003-06-01')
+insert into SHIPMENT values (203,1,'2004-02-01')
+insert into SHIPMENT values (203,2,'2004-02-01')
+insert into SHIPMENT values (203,3,'2004-02-01')
+insert into SHIPMENT values (204,4,'2004-06-02')
+insert into SHIPMENT values (204,2,'2004-06-02')
+
+
+
+update C_ORDER
+set ordamt = (
+    select sum(O.qty * T.price)
+    from ORDER_ITEM O, ITEM T
+    where O.itemid = T.itemid
+      and O.orderid = 209
+) where orderid = 209;
+Select * from C_ORDER
+Select * from CUSTOMER
+Select * from ORDER_ITEM
+select * from SHIPMENT
+
+--1. Produce a listing: CUSTNAME, #oforders, AVG_ORDER_AMT, where the middle
 --column is the total numbers of orders by the customer and the last column is the
 --average order amount for that customer.
-select c.cname as CUSTNAME , count(o.orderid) as NO_OF_ORDERS , avg(o.oamt) from customer c ,orders o where c.cid = o.cid  group by c.cname
 
--- For each item that has more than two orders , list the item, number of orders that are
+select c.cname , COUNT(o.orderid) , AVG(o.ordamt) from  CUSTOMER c , C_ORDER o where c.custid = o.custid group by c.cname;
+
+--2. For each item that has more than two orders , list the item, number of orders that are
 --shipped from atleast two warehouses and total quantity of items shipped
 
-select oi.itemid , count(distinct oi.orderid) , sum(oi.qty) from orderItem oi where oi.orderid in (
-    select orderid from shipment group by orderid having count(distinct(warehouseid) ) >= 2 
-) group by oi.itemid HAVING COUNT(distinct (oi.orderId) ) >2
+select itemid , COUNT( distinct oi.orderid) AS 'No_of_Orders' , SUM(oi.qty) AS 'Total Quantity' from ORDER_ITEM oi where oi.orderid in (
+	select orderid from SHIPMENT group by orderid having COUNT( distinct warehouseid) >= 2 
+) group by oi.itemid having COUNT( distinct oi.orderid ) >2;
 
-
-SELECT 
-    oi.itemid,
-    COUNT(DISTINCT oi.orderid) AS num_orders,
-    SUM(oi.qty) AS total_qty
-FROM orderItem oi
-WHERE oi.orderid IN (
-    SELECT orderid
-    FROM shipment
-    GROUP BY orderid
-    HAVING COUNT(DISTINCT warehouseid) >= 2
-)
-GROUP BY oi.itemid
-HAVING COUNT(DISTINCT oi.orderid) > 2;
-
---List the customers who have ordered for every item that the company produces
-select c.cname from customer c where c.cid in (
-    select o.cid 
-    from
-    orders o , orderItem oi 
-    where o.orderId = oi.orderId
-    group by o.cid 
-     having count(distinct oi.itemid) = (select count(*) from item)
-)
+--3. List the customers who have ordered for every item that the company produces
+SELECT C.cname FROM CUSTOMER C WHERE NOT EXISTS(
+(SELECT itemid FROM ITEM)
+EXCEPT
+(select distinct (OI.itemid) from C_ORDER O , ORDER_ITEM OI 
+where O.orderid=OI.orderid and o.custid=c.custid)
+);
