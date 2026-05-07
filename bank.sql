@@ -38,3 +38,26 @@ create table loan(
 	primary key(lnumber),
 	foreign key(bname) references branch(bname) on delete cascade on update cascade
 );
+
+create table borrower(
+	cname varchar(20),
+	lnumber int,
+	primary key(cname , lnumber),
+	foreign key(cname) references customer(cname) on delete cascade on update cascade,
+	foreign key(lnumber) references loan(lnumber) on delete cascade on update cascade,	
+	
+);
+
+insert into branch values
+('b1','bangalore',90000000),
+('b2','bangalore',90000000),
+('b3','bangalore',90000000),
+('mb1','mumbai',90000000),
+('mb2','mumbai',90000000),
+('ch1','chennai',90000000);
+
+
+
+select * from branch
+
+
